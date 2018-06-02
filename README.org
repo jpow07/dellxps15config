@@ -1,0 +1,127 @@
+#+TITLE: Dell XPS 15 Ubuntu Configuration
+* Configure Windows
+** Enable AHCI Mode
+   Ubuntu can not boot properly if the BIOS is in RAID on mode, It
+   must be placed into AHCI mode and safeboot must be disabled.
+*** Load Windows
+    Start Windows, before changing BIOS Settings
+
+*** Partition Disk    
+    Reduce Partition size of the Windows OS to make room for Ubuntu, I
+    allocated 300 GB, because I dont use windows, but need it for
+    school.
+    
+*** Boot into Safe Mode
+
+    Run Command Prompt as Administrator
+    Type the following command into Command Prompt 
+
+    #+BEGIN_SRC 
+    bcedit /set {current} safeboot minimal
+
+    #+END_SRC
+ 
+    Restart the Machine, boot into BIOS <f2> key
+    
+    Expand *System Configuration* and select *System Operation*
+    
+    Switch from *RAID on* to *AHCI*
+
+    Save and exit to boot into Windows Safe mode
+
+    Reopen Command Prompt as Administator
+    
+    #+BEGIN_SRC 
+    bcedit /deletevalue {current} safeboot
+    
+    #+END_SRC
+
+    This will disable Safe Mode
+    
+    Restart Computer
+
+** Create a Bootable USB with Rufus
+
+*** Install Rufus and Setup
+   Select USB to write ISO on
+   Boot Selection: Select Ubuntu 16.04.1.iso
+   Partition Scheme: MBR
+   Target System: BIOS or UEFI
+   Cluster Size: 32Kb
+
+   Everything else will be set to default
+
+* Install Ubuntu
+   Restart computer and open boot menu with <f12> key
+
+   When at the try ubuntu without installing press 'e' key to edit
+   grub boot menu add the following command:
+
+    #+BEGIN_SRC 
+    nouveau.modeset=0
+
+    #+END_SRC
+    This will disable nouveau drivers that cause splash screen
+    freezes.
+
+** Configure Ubuntu
+*** Upgrade and update 
+    #+BEGIN_SRC 
+    sudo apt upgrade && sudo apt update
+    sudo apt install vim emacs 
+    #+END_SRC
+
+*** Disable nouveau Install Nvidia
+    Remove any nvidia drivers (there shouldn't be any)
+    #+BEGIN_SRC
+     sudo apt-get remove nvidia* && sudo apt autoremove
+    #+END_SRC
+    Install some packages for the build kernel
+
+    #+BEGIN_SRC
+    sudo apt-get install dkms build-essential linux-headers-generic
+    #+END_SRC
+
+    Block and disable nouveau kernel driver
+
+    #+BEGIN_SRC
+    sudo vim /etc/modprobe.d/blacklist.conf
+    #+END_SRC
+
+    Insert following lines into blacklist.conf
+    
+    #+BEGIN_SRC
+     blacklist nouveau
+     blacklist lbm-nouveau
+     options nouveau modeset=0
+     alias nouveau off
+     alias lbm-nouveau off
+
+    #+END_SRC
+
+    Save and Exit
+
+    Install Nvidia drivers
+    #+BEGIN_SRC 
+    sudo add-apt-repository ppa:graphics-drivers
+    sudo apt-get update
+    sudo apt-get install nvidia-370
+
+    #+END_SRC
+
+    Check if computer is running nvidia and not nouveau
+
+    #+BEGIN_SRC 
+    lsmod | grep nouveau
+
+    #+END_SRC
+
+    If it returns a result go to additional drivers and ensure Nvidia
+    drivers are selected.
+
+    Restart Computer 
+
+    *IF COMPUTER DOESNT RESTART OR FREEZES ON SPLASH EDIT GRUB WITH
+    nouveau.modeset=0 THEN DOUBLE CHECK NVIDA DRIVERS ARE INSTALLED
+    CORRECTLY*
+
