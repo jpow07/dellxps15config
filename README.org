@@ -72,7 +72,7 @@
    _Note: Ubuntu 16.04.4 did not work_
 
 * Install Ubuntu
-   Restart computer and open one-time boot menu with <f12> key
+  Restart computer and open one-time boot menu with <f12> key
 
    ATTENTION:: This step is crucial for disabling nouveau drivers,
    forgetting this step will cause the computer to freeze at the
@@ -90,7 +90,7 @@
 
     If it still freezes, reset the machine and retry, double-check your spelling.
 
-** Install Ubuntu
+** Installing Ubuntu (Steps)
    Now you can install Ubuntu onto the Unallocated partition you
    created earlier. 
    
@@ -207,7 +207,7 @@
      
      Once you've added that press <f10> to boot. 
 
-** Configure Ubuntu
+* Configure Ubuntu
    After Ubuntu is installed you will need to configure NVIDIA drivers, touchpad, and fix the timezone. I have included a master Copy-Paste to do everything for you, but if you want to know whats going on then read each section.
 
 *** MASTER
@@ -364,6 +364,7 @@
     sudo apt install build-essential
     #+END_SRC
 
+** Addition Installations(Not Required)
 *** Install dvipng
     dvipng is needed for org-mode, latex, to preview Latex Snippets in code
     #+BEGIN_SRC 
@@ -371,7 +372,7 @@
     #+END_SRC
 
 *** Install zsh
-    Install zsh
+    Install zsh to make your terminal experience much nicer
     #+BEGIN_SRC 
     sudo apt install zsh
     #+END_SRC
@@ -393,6 +394,9 @@
     sure if its necessary, but I was having isssues so I added that.
     
 *** Install Node 
+    Node is just different from how most things are installed so I
+    thought I would just add it, probably not that important unless
+    you are a developer.
    #+BEGIN_SRC
    curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
    sudo apt-get install -y nodejs
