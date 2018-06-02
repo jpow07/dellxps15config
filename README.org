@@ -1,4 +1,4 @@
-#+TITLE: Dell XPS 15 Dual Boot Windows10/Ubuntu16.04.1 Configuration
+#+TITLE: Dell XPS 15 Dual Boot Windows10/Ubuntu16.04.4 Configuration
 * Configure Windows
 ** Update BIOS
    Ensure you are running the most up to date BIOS, you can check this
@@ -58,8 +58,12 @@
     I used [[https://rufus.akeo.ie/downloads/rufus-3.0.exe][Rufus Version 3.0]] (download link)
  
 *** Configurations
-   Select USB to where you want to store the ISO Image.
-   Boot Selection: Select Ubuntu 16.04.1.iso
+   Select USB to where you want to store the ISO Image. Boot
+   Selection: Select Ubuntu 16.04.1.iso 
+
+   Note: I tried using the 16.04.4 ISO and had issues getting it to
+   work properly, but once you install Ubuntu and run update, you will be running 16.04.4.
+   
    Partition Scheme: MBR
 
    __Note: GPT will not be recognized by the one-time boot menu, so if
