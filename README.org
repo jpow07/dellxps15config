@@ -224,8 +224,8 @@
     
     That should install the proper programs needed to fix device drivers but you will need to edit some root files.
 
-    To remove nouveau drives we can add them to the blacklist of programs
-    
+    Before we edit root files, lets fix the touchpad so it stops jumping around the screen. 
+
     Open the file for the touchpad
     #+BEGIN_SRC 
     sudo gedit /usr/share/X11/xorg.conf.d/90-libinput.conf
