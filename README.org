@@ -1,4 +1,4 @@
-#+TITLE: Dell XPS 15 Ubuntu Configuration
+#+TITLE: Dell XPS 15 Dual Boot Windows10/Ubuntu16.04.1 Configuration
 * Configure Windows
 ** Enable AHCI Mode
    Ubuntu can not boot properly if the BIOS is in RAID on mode, It
@@ -41,7 +41,6 @@
     Restart Computer
 
 ** Create a Bootable USB with Rufus
-
 *** Install Rufus and Setup
    Select USB to write ISO on
    Boot Selection: Select Ubuntu 16.04.1.iso
@@ -50,6 +49,8 @@
    Cluster Size: 32Kb
 
    Everything else will be set to default
+   
+   Note: Ubuntu 16.04.4 did not work
 
 * Install Ubuntu
    Restart computer and open boot menu with <f12> key
