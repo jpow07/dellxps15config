@@ -170,3 +170,8 @@
 
 
     
+*** Install dvipng
+    dvipng is needed for org-mode, latex, to preview Latex Snippets in code
+    #+BEGIN_SRC 
+    sudo apt install dvipng
+    #+END_SRC
