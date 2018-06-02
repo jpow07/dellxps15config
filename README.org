@@ -156,5 +156,13 @@
     #+END_SRC
     Check my dotfiles .bashrc to view the new configuration; I'm not
     sure if its necessary, but I was having isssues so I added that.
+    
+*** Install Node 
+   #+BEGIN_SRC
+   curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+   sudo apt-get install -y nodejs
+   sudo npm install -g grunt-cli yarn @angular/cli
+   #+END_SRC
+
 
     
