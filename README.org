@@ -1,6 +1,11 @@
 #+TITLE: Dell XPS 15 Dual Boot Windows10/Ubuntu16.04.1 Configuration
 * Configure Windows
+** Update BIOS
+   Ensure you are running the most up to date BIOS, you can check this
+   in the BIOS menu by pressing <f2> during startup.
+
 ** Enable AHCI Mode
+
    Ubuntu can not boot properly if the BIOS is in RAID on mode, It
    must be placed into AHCI mode and safeboot must be disabled.
 *** Load Windows
@@ -126,3 +131,30 @@
     nouveau.modeset=0 THEN DOUBLE CHECK NVIDA DRIVERS ARE INSTALLED
     CORRECTLY*
 
+*** Fix TimeZone
+    #+BEGIN_SRC 
+    timedatectl set-local-rtc 1
+    #+END_SRC
+*** Install zsh
+    Install zsh
+    #+BEGIN_SRC 
+    sudo apt install zsh
+    #+END_SRC
+    
+    install oh_my_zsh
+    #+BEGIN_SRC 
+    git clone https://github.com/robbyrussell/oh-my-zsh.git
+    #+END_SRC
+
+    Change the default shell
+    #+BEGIN_SRC 
+    chsh -s /usr/bin/zsh
+    #+END_SRC
+    Use the actual path to your zsh, although it could be different to check type 
+    #+BEGIN_SRC 
+    whereis zsh
+    #+END_SRC
+    Check my dotfiles .bashrc to view the new configuration; I'm not
+    sure if its necessary, but I was having isssues so I added that.
+
+    
