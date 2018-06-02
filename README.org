@@ -3,81 +3,304 @@
 ** Update BIOS
    Ensure you are running the most up to date BIOS, you can check this
    in the BIOS menu by pressing <f2> during startup.
-
-** Enable AHCI Mode
-
-   Ubuntu can not boot properly if the BIOS is in RAID on mode, It
-   must be placed into AHCI mode and safeboot must be disabled.
-*** Load Windows
-    Start Windows, before changing BIOS Settings
-
-*** Partition Disk    
-    Reduce Partition size of the Windows OS to make room for Ubuntu, I
-    allocated 300 GB, because I dont use windows, but need it for
-    school.
+   
+** Configure BIOS
+   In order to install Ubuntu on the Dell XPS 15, you must place the
+   computer into AHCI mode and disable secure boot
+   
+   To change the BIOS settings you will need to place windows into
+   safeboot mode, in order to prevent any driver conflicts.
+   
+   Skipping this disk will cause a lot of issues!
     
-*** Boot into Safe Mode
+*** SafeBoot and Configure BIOS
+**** Enable SafeBoot Mode
+    Run Command Prompt as Administrator Type the following command
+    into Command Prompt, did not test this method in PowerShell
 
-    Run Command Prompt as Administrator
-    Type the following command into Command Prompt 
-
+    This will start your computer in safeboot after you restart into Windows 10
+    
     #+BEGIN_SRC 
-    bcedit /set {current} safeboot minimal
-
+      bcedit /set {current} safeboot minimal
     #+END_SRC
  
+**** BIOS Settings
     Restart the Machine, boot into BIOS <f2> key
-    
+**** Switch to AHCI Mode
     Expand *System Configuration* and select *System Operation*
-    
-    Switch from *RAID on* to *AHCI*
-
-    Save and exit to boot into Windows Safe mode
-
+    Switch from RAID on to AHCI
+**** Disable Secure Boot
+    Disable Secure Boot
+**** Boot into Windows
+    Exit and save the BIOS settings, then boot into Windows, you will
+    now be in safeboot mode
+**** Disable SafeBoot
     Reopen Command Prompt as Administator
     
     #+BEGIN_SRC 
-    bcedit /deletevalue {current} safeboot
-    
+      bcedit /deletevalue {current} safeboot  
     #+END_SRC
 
     This will disable Safe Mode
-    
+
     Restart Computer
+    
+** Partition Disk    
+    You will need to make room for Ubuntu on the hard drive To do this
+    you need to partition the disk: Select the Windows OS Partition,
+    right-click, and shrink the volume to the desired amount. The
+    unallocated space will be used for the Ubuntu OS
 
 ** Create a Bootable USB with Rufus
-*** Install Rufus and Setup
-   Select USB to write ISO on
+   You will need to use a third-party application to create a bootable
+   ISO for Ubuntu.
+*** Install Rufus
+    I used [[https://rufus.akeo.ie/downloads/rufus-3.0.exe][Rufus Version 3.0]] (download link)
+ 
+*** Configurations
+   Select USB to where you want to store the ISO Image.
    Boot Selection: Select Ubuntu 16.04.1.iso
    Partition Scheme: MBR
-   Target System: BIOS or UEFI
-   Cluster Size: 32Kb
+
+   __Note: GPT will not be recognized by the one-time boot menu, so if
+   you use it, the computer wont be able to detect the USB drive.__
+
+   Target System: BIOS or UEFI Cluster Size: 32Kb
 
    Everything else will be set to default
    
-   Note: Ubuntu 16.04.4 did not work
+   _Note: Ubuntu 16.04.4 did not work_
 
 * Install Ubuntu
-   Restart computer and open boot menu with <f12> key
+   Restart computer and open one-time boot menu with <f12> key
 
-   When at the try ubuntu without installing press 'e' key to edit
-   grub boot menu add the following command:
+   ATTENTION:: This step is crucial for disabling nouveau drivers,
+   forgetting this step will cause the computer to freeze at the
+   splash screen.
 
+   Press 'e' at the GRUB menu, where it ask to install, try ubuntu, etc. 
+   This will load you into the GRUB menu. 
+   Add the following command to the end of the GRUB menu
     #+BEGIN_SRC 
     nouveau.modeset=0
 
     #+END_SRC
-    This will disable nouveau drivers that cause splash screen
-    freezes.
+    
+    Then press <f10> to boot into Ubuntu.
+
+    If it still freezes, reset the machine and retry, double-check your spelling.
+
+** Install Ubuntu
+   Now you can install Ubuntu onto the Unallocated partition you
+   created earlier. 
+   
+   It should be noted that Ubuntu calls unallocated space, free space.
+   
+   There are a couple options when installing.
+*** Install alongside Windows (Easy)
+    This will handle all the partitioning and essentailly install your
+    Ubuntu on the Unallocated/free space you created earlier.
+*** Erase Disk and Install Ubuntu (Easy)
+    This will reformat your entire drive and install only Ubuntu on
+    your system, Windows will be deleted permanently.
+
+*** Something Else (Preferred)
+    This method is preferred because it will
+    allow you to keep your home directory separate from the root
+    directory. 
+
+    This allows you to update to a newer distribution, or change
+    distributions without worrying about losing your home directory,
+    or any of your files. It also adds another layer of protection in
+    case you mess up your current distribution, you can reinstall the
+    root drive and you wont lose your files in the home drive.
+    
+    It should be noted that messing with partitions can cause
+    a lot of problems in your system, but honestly, if you pay attention to the
+    tutorial you will be fine and nothing will go wrong.
+
+**** Creating Individual Partitions
+     We are going to create three partitions, a root partition, a swap
+     partition, and a home partition.
+
+     Additionally, you could create a fourth partition for the tmp
+     directory although everything in the /tmp directory should be
+     deleted when you reboot the machine.
+     
+     Install the partitions in the following order.
+***** Swap Partition  
+      The swap partition is used for backing up your system RAM when
+      the computer hibernates or when your RAM is full. It will move
+      inactive programs on the RAM into the SWAP partition, until you
+      need it again.
+
+      Generally you should make the SWAP partition the same size as
+      your System's RAM, unless you are going to be using Hibernate,
+      then you should double the Swap partition. So 16GB is 16000MB,
+      8GB is 8000MB.
+
+      Next will select the following:
+       - Logical
+       - Beginning of this space
+       - Use as Swap Area.
+      
+      Note: you should add Swap area to the beginning of the drive.
+      This will allow you to easily copy your hardrive if you decide
+      to upgrade.
+        
+***** Root Partition
+      The root partition will store the essential files your computer
+      needs to boot and operate.
+      
+      To do this you will select free space and create a new partion
+      table by clicking the '+' icon or I believe double-clicking free
+      space works as well.
+
+      You will allocated the amount needed for the root directory,
+      generally around 10-15 GB will work, or 15000 MB. 
+      
+      - Typically a fresh install will only consume
+        about 7.5GB, but as things are added or installed it will
+        fluxuate.
+
+      Next you will select the following:
+      - Primary 
+      
+      Note: It doesn't have to be primary, and nothing will fail if
+      its logical. This is a very complex topic, so feel free to read
+      about it more if you want.
+      
+      - Use as: Ext4 Journaling System
+
+      - Mount Point: /
+        Note: / is the root directory
+
+***** Home Partition
+      The home parition is where all your information will be stored,
+      your files, folders, pictures, etc.
+
+      This is where you will allocate the remaining free space
+      
+      Next you will select the following:
+        - Logical
+        - Use as: Ext4 Journaling System
+        - Mount Point: /home
+
+*** Finalize Install
+    After you have created your partitions select Install now and
+    continue.
+**** Disable nouveau AGAIN
+     After the install it will restart, when it brings you back to the
+     GRUB menu to select an operating system you will need to edit the
+     GRUB menu again to disable nouveau drivers. 
+     
+     Note: This will be the last time you have to do this.
+
+     Press 'e' to edit the GRUB menu
+
+     The GRUB Menu will look different than last time, but just add
+     the following command to the end of the file.
+
+     #+BEGIN_SRC 
+     nouveau.modeset=0
+     #+END_SRC
+     
+     Once you've added that press <f10> to boot. 
 
 ** Configure Ubuntu
-*** Upgrade and update 
+   After Ubuntu is installed you will need to configure NVIDIA drivers, touchpad, and fix the timezone. I have included a master Copy-Paste to do everything for you, but if you want to know whats going on then read each section.
+
+*** MASTER
+    Just copy and paste into terminal
     #+BEGIN_SRC 
-    sudo apt upgrade && sudo apt update
+    sudo apt update && sudo apt upgrade
+    sudo apt-get remove nvidia* && sudo apt autoremove
+    sudo apt install vim emacs dkms build-essential linux-headers-generic xserver-xorg-input-libinput
+    sudo add-apt-repository ppa:graphics-drivers
+    sudo apt-get update
+    sudo apt-get install nvidia-370 
+    timedatectl set-local-rtc 1
+    #+END_SRC
+    
+    That should install the proper programs needed to fix device drivers but you will need to edit some root files.
+
+    To remove nouveau drives we can add them to the blacklist of programs
+    
+    Open the file for the touchpad
+    #+BEGIN_SRC 
+    sudo gedit /usr/share/X11/xorg.conf.d/90-libinput.conf
+    #+END_SRC
+    
+    Edit the following area or just paste this section over the InputClass section
+    #+BEGIN_SRC 
+    Section "InputClass"
+    Identifier "libinput touchpad catchall"
+    MatchIsTouchpad "on"
+    MatchDevicePath "/dev/input/event*"
+    Driver "libinput"
+    Option "Tapping" "True"
+    Option "PalmDetection" "True"
+    Option "TappingDragLock" "True"
+    EndSection
+    #+END_SRC
+    
+    Next we will blacklist the nouveau drivers Open the file with vim,
+    vim is a little tricky if this is your first time.
+
+    To get familiar just stop what you're doing and run _vimtutor_ in
+    the command line to learn the basics
+    
+    #+BEGIN_SRC
+    sudo vim /etc/modprobe.d/blacklist.conf
+    #+END_SRC
+
+    Insert following lines into blacklist.conf
+    
+    #+BEGIN_SRC
+     blacklist nouveau
+     blacklist lbm-nouveau
+     options nouveau modeset=0
+     alias nouveau off
+     alias lbm-nouveau off
+
+    #+END_SRC
+
+    Save and exit vim 
+    #+BEGIN_SRC 
+    :wq
+    #+END_SRC
+    
+    Now you will want to restart your computer and boot back into
+    Ubuntu. If you get a frozen splash screen restart and add the
+    nouveau.modeset=0 to the GRUB menu again.
+
+    You probably need to update initramfs
+    
+    Open a terminal and run:
+    #+BEGIN_SRC 
+    sudo update-initramfs -u
+    #+END_SRC
+    
+    Now you will need to reboot
+
+    Once the machine is running correctly you can check that your
+    computer is using NVIDIA drivers by running.
+    #+BEGIN_SRC 
+    lsmod | grep nvidia
+    #+END_SRC
+    
+    If you see a result then you are running the correct drivers.
+
+*** Each Step Of the Master Copy and Paste
+
+**** Upgrade and update 
+    
+    #+BEGIN_SRC 
+    sudo apt update && sudo apt upgrade
     sudo apt install vim emacs 
     #+END_SRC
 
-*** Disable nouveau Install Nvidia
+**** Disable nouveau Install Nvidia
     Remove any nvidia drivers (there shouldn't be any)
     #+BEGIN_SRC
      sudo apt-get remove nvidia* && sudo apt autoremove
@@ -131,10 +354,22 @@
     nouveau.modeset=0 THEN DOUBLE CHECK NVIDA DRIVERS ARE INSTALLED
     CORRECTLY*
 
-*** Fix TimeZone
+**** Fix TimeZone
     #+BEGIN_SRC 
     timedatectl set-local-rtc 1
     #+END_SRC
+
+**** Build-Essential
+    #+BEGIN_SRC 
+    sudo apt install build-essential
+    #+END_SRC
+
+*** Install dvipng
+    dvipng is needed for org-mode, latex, to preview Latex Snippets in code
+    #+BEGIN_SRC 
+    sudo apt install dvipng
+    #+END_SRC
+
 *** Install zsh
     Install zsh
     #+BEGIN_SRC 
@@ -157,10 +392,6 @@
     Check my dotfiles .bashrc to view the new configuration; I'm not
     sure if its necessary, but I was having isssues so I added that.
     
-*** Build-Essential
-    #+BEGIN_SRC 
-    sudo apt install build-essential
-    #+END_SRC
 *** Install Node 
    #+BEGIN_SRC
    curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
@@ -168,10 +399,3 @@
    sudo npm install -g grunt-cli yarn @angular/cli
    #+END_SRC
 
-
-    
-*** Install dvipng
-    dvipng is needed for org-mode, latex, to preview Latex Snippets in code
-    #+BEGIN_SRC 
-    sudo apt install dvipng
-    #+END_SRC
