@@ -157,6 +157,10 @@
     Check my dotfiles .bashrc to view the new configuration; I'm not
     sure if its necessary, but I was having isssues so I added that.
     
+*** Build-Essential
+    #+BEGIN_SRC 
+    sudo apt install build-essential
+    #+END_SRC
 *** Install Node 
    #+BEGIN_SRC
    curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
